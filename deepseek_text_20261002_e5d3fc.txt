@@ -1,0 +1,100 @@
+================================================================================
+PRACTICAL 3: Working with CircleCI for continuous integration
+================================================================================
+
+AIM:
+To implement Continuous Integration (CI) using CircleCI for a Python application.
+
+THEORY:
+Continuous integration is a software development strategy that increases the speed of development while ensuring the quality of the code. Developers continually commit changes in small increments, and each change is automatically built and tested by the CI server before it is merged into the product.
+
+WORKING STEPS:
+
+1. Prerequisites:
+Download and install GitHub Desktop, Git for Windows (Git Bash), and VS Code. Install the Python extension in VS Code.
+
+2. Create Project Folder:
+Create a folder named CIRCLECI. Open it in VS Code.
+
+3. Create Python Files:
+Inside the folder, create main.py:
+
+def to_upper(name):
+    return name.upper()
+
+def say_hello(name):
+    print(f'Hello, {name}')
+
+if __name__ == '__main__':
+    name='TrainwithTannu'
+    say_hello(name)
+    up = to_upper(name)
+    print(up)
+
+Create test.py:
+
+import unittest
+from main import to_upper
+
+class MyTestCase(unittest.TestCase):
+    def test_to_upper(self):
+        name="Tannu"
+        upper_name=to_upper(name)
+        self.assertEqual(upper_name, "TANNU")
+
+if __name__ == '__main__':
+    unittest.main()
+
+4. Create README:
+Create readme.md and add basic instructions (e.g., "How to run the code").
+
+5. Push to GitHub:
+Open GitHub Desktop. Sign in. Create a new repository on GitHub named CircleCI-Python3. Clone it locally. Copy your files into the cloned repo. Open Git Bash, navigate to the repo, and run:
+
+git add .
+git commit -m "added python file by tannu"
+git push origin main
+
+6. Setup CircleCI:
+Go to circleci.com and log in with GitHub. Set up the project by selecting your repository.
+
+7. Create CircleCI Config:
+In your project root, create a folder .circleci and inside it create config.yml.
+
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: cimg/python:3.11
+    steps:
+      - checkout
+      - run: python main.py
+  test:
+    docker:
+      - image: cimg/python:3.11
+    steps:
+      - checkout
+      - run: python test.py
+
+workflows:
+  build_and_test_deploy:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
+
+8. Push and Verify:
+Commit and push the .circleci/config.yml file using Git commands. Go to the CircleCI dashboard. You will see the "build" and "test" jobs running. Click on them to see the successful execution of your Python files.
+
+COMMON PROBLEMS & SOLUTIONS:
+
+Problem 1: "Config file not found" or "Syntax Error" in CircleCI.
+- Solution: Ensure the folder is named exactly .circleci (with the dot) and the file is config.yml. YAML is very strict about indentation; ensure you use spaces (not tabs) and the structure matches exactly.
+
+Problem 2: "Permission denied" when running python scripts.
+- Solution: Ensure the files are committed and pushed to GitHub correctly. Check if the repo is public or if CircleCI has been granted access to private repos.
+
+OUTPUT:
+CircleCI dashboard shows a successful pipeline with both "build" and "test" jobs passing. The logs confirm that main.py and test.py executed correctly.
